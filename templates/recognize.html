@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>title</title>
+    <script src="/static/layui/layui.js"></script>
+    <script src="/static/jquery-2.1.1.min.js"></script>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+</head>
+
+
+<body>
+<div style="margin: 0 auto; max-width: 1140px;">
+    <div class="layui-row">
+        <div class="layui-col-xs6 layui-col-sm6 layui-col-md4"><a href="/to_creat_face" ><div style="text-align: center">人脸收集</div></a> </div>
+        <div class=" layui-col-xs6 layui-col-sm6 layui-col-md4">
+            <form class="layui-form">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                    <legend><b>采集人脸</b></legend>
+
+                </fieldset>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">姓名</label>
+                    <div class="layui-input-block">
+                        <input required type="text" id="username" autocomplete="off" placeholder="请输入姓名" class="layui-input"
+                               style="width: 50%">
+                    </div>
+                </div>
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                    <legend><b>请保持人脸在被选中，不要遮挡面部</b></legend>
+                </fieldset>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">人脸画面</label>
+                    <div class="layui-input-block">
+                        <img src="{{ url_for('pi_camera') }}" height="200px">
+                    </div>
+                </div>
+
+
+                        <div class="layui-input-block">
+                            <a type="botton" class="layui-btn" onclick="submit()">提交</a>
+                        </div>
+            </form>
+
+        </div>
+        <div class="layui-col-xs4 layui-col-sm12 layui-col-md4"><a href="/detect_face"><div style="text-align: center">检测</div></a></div>
+    </div>
+</div>
+
+</body>
+<script>
+    function submit() {
+        var username = document.getElementById('username').value
+        var data = {
+            'username': username
+        }
+        jsonStr = JSON.stringify(data)
+        console.log(data)
+        layer.msg("等待处理...", {
+            time: 3000,
+            shade: 0.6,
+            success: function (layero, index) {
+                var msg = layero.text();
+                var i = 3;
+                var timer = null;
+                var fn = function () {
+                    layero.find(".layui-layer-content").text(msg + '(' + i + ')');
+                    if (!i) {
+                        layer.close(index);
+                        clearInterval(timer);
+                    }
+                    i--;
+                };
+                timer = setInterval(fn, 1000);
+                fn();
+            }
+        }, function () {
+            window.location.href = '/make_face?data=' + jsonStr
+        });
+    }
+</script>
+</html>
